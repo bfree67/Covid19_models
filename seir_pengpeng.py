@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Mar 27 09:52:29 2020
-SEIR model based on
+
+SEIR model based on:
 "SEIR Transmission dynamics model of 2019 nCoV coronavirus
 with considering the weak infectious ability and changes in latency duration"
 by Shi Pengpeng, Cao Shengli, and Feng Peihua
 doi: https://doi.org/10.1101/2020.02.16.20023655
 
-@author: Brian
+@author: Brian Freeman
+Python 3.7
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 
+# set parameters
 c = 3.6 #contact rate
 beta = 6.93e-11 #probability of transmission
 delta_I = 0.13 # quarantine rate of the infected
@@ -27,7 +30,7 @@ T = 40 # days
 t = 0.1 # period in days (time step)
 NN = int(T/t) # set time steps
 
-#Initial values
+# Initial values
 S = 8.3e6  # Susceptible population
 E = 4007     # Exposed population
 I = 7770     # Infected population
