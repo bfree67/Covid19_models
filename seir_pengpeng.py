@@ -22,11 +22,11 @@ delta_I = 0.13 # quarantine rate of the infected
 delta_q = 0.13 # transformation rate from the exposed to the isolated infected
 gama_I = 0.003 # recovery rate of the infected
 gama_H = 0.009 # recovery rate of the isolated infected
-q = 9e-7  #quarantine ratio
-alpha = 0.0001 # diseaseinduced death rate
+q = 9e-7  # quarantine ratio
+alpha = 0.01 # disease induced death rate
 theta = 0.6 # ratio of the transmission ability of the exposed to the infected.
 lam = 1/14 # rate of isolation release (1/days)
-T = 40 # days
+T = 40 # modelling period (days)
 t = 0.1 # period in days (time step)
 NN = int(T/t) # set time steps
 
@@ -37,8 +37,8 @@ I = 7770     # Infected population
 Sq = 8420    # Isolated susceptible
 Eq = 3000    # Isolated Exposed
 H = I + Eq     # Hospitalized
-R = 34       # Recovered
-De = 25      # Died
+R = 400      # Recovered
+De = 17      # Died
 
 # initialize lists to store time steps
 SS = [S]
@@ -61,14 +61,14 @@ for ii in range (1,NN):
     dDe = alpha*(I+H)
 
     #Euler integration algorithm
-    S = round(S+dS*t,0)
-    E = round(E+dE*t,0)
-    I = round(I+dI*t,)
-    Sq = round(Sq+dSq*t,0)
-    Eq = round(Eq+dEq*t,0)
-    H = round(H+dH*t,0)
-    R = round(R+dR*t,0)
-    De = round(De + dDe*t,0)
+    S = S + dS*t
+    E = E + dE*t
+    I = I + dI*t
+    Sq = Sq + dSq*t
+    Eq = Eq + dEq*t
+    H = H + dH*t
+    R = R + dR*t
+    De = De + dDe*t
 
     #update lists
     SS.append(S)
@@ -80,7 +80,7 @@ for ii in range (1,NN):
 
 # plot specified list
 x = np.asarray(x_range)
-y = np.asarray(HH)
+y = np.asarray(DD)
 
 plt.plot(y)
 ticks = np.arange(x.min(), x.max(), 50)
