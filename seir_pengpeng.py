@@ -46,6 +46,9 @@ EE = [E]
 II = [I]
 HH = [H]
 DD = [De]
+SSQ=[Sq]
+EEQ=[Eq]
+RR=[R]
 x_range = []
 
 for ii in range (1,NN):
@@ -76,15 +79,19 @@ for ii in range (1,NN):
     II.append(I)
     HH.append(H)
     DD.append(De)
+    SSQ.append(Sq)
+    EEQ.append(Eq)
+    RR.append(R)
     x_range.append(ii)
 
 # plot specified list
 x = np.asarray(x_range)
-y = np.asarray(DD)
+y = np.asarray(RR)  # <----change plots here
 
 plt.plot(y)
 ticks = np.arange(x.min(), x.max(), 50)
 labels = np.round(ticks/10,0).astype(int)
 plt.xticks(ticks, labels)
 plt.xlabel('Days')
+plt.ylabel('People')
 plt.show()
