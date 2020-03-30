@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Mar 29 01:28:43 2020
-
+Expanded SEIR model to account for missing links to different state conditions
 @author: Brian
 """
 
@@ -24,20 +24,9 @@ R = 0   # Recovered
 #initialize lists
 aS = [S]; aSQ = [Sq]; aE = [E]; aEQ = [Eq]; aI = [I]; aIQ = [Iq]
 aH = [H]; aICU = [Icu]; aD = [D]; aR = [R]
+model_period = 4 # days
 
-'''
-S = S*ps_s + R*pr_s - S*ps_e - S*ps_sq
-SQ = SQ*psq_sq + S*ps_sq - SQ*psq_s - SQ*psq_e - SQ*psq_eq
-E = E*pe_e + S*ps_e + SQ*psq_e - E*pe_i - E*pe_eq - E*pe_s
-EQ = EQ*peq_eq + SQ*psq_eq + E*pe_eq - EQ*peq_s - EQ*peq_iq - EQ*peq_i
-I = I*pi_i + E*pe_i + EQ*peq_i - I*pi_s - I*pi_iq - I*pi_h - I*pi_d
-IQ = IQ*piq_iq + EQ*peq_iq + I*pi_iq - IQ*piq_h - IQ*piq_s - IQ*piq_d
-H = H*ph_h + I*pi_h + IQ*piq_h + ICU*picu_h - H*ph_s - H*ph_icu - H*ph_d
-ICU = ICU*picu_icu + H*ph_icu - ICU*picu_h - ICU*picu_d
-D = ICU*picu_d + H*ph_d + IQ*piq_d + I*pi_d
-R = R*pr_r + E*pe_s + + EQ*peq_s + I*pi_s + IQ*piq_s + H*ph_s - R*pr_s
-'''
-for i in range (60):
+for i in range (model_period):
     ### set output values
     ps_sq = 0.4
     StoSQ = S * ps_sq
@@ -94,20 +83,21 @@ for i in range (60):
     RtoS = R * pr_s
 
     ### begin calculations
-    D += (HtoD + ICUtoD + ItoD + IQtoD); aD.append((HtoD + ICUtoD + ItoD + IQtoD))
-    R += (ItoR + IQtoR + HtoR ); aR.append(ItoR + IQtoR + HtoR)
-    Sq += (StoSQ - SQtoE - SQtoEQ); aSQ.append(Sq)
-    E += (StoE + SQtoE - EtoEQ - EtoI); aE.append(E)
-    Eq += (EtoEQ + SQtoEQ - EQtoI - EQtoI); aEQ.append(Eq)
-    I += (EtoI + EQtoI - ItoR - ItoIQ - ItoH - ItoD); aI.append(I)
-    Iq += (ItoIQ + EQtoIQ - IQtoR - IQtoH - IQtoD); aIQ.append(Iq)
-    H += (ItoH + IQtoH + ICUtoH - HtoR - HtoICU - HtoD); aH.append(H)
-    Icu += (HtoICU - ICUtoH - ICUtoD); aICU.append(Icu)
-    S += ( -StoSQ - StoE); aS.append(S)
-    TotPop = S + Sq + E + Eq +I + Iq + H + Icu + R - D
+    Dnew = round(HtoD + ICUtoD + ItoD + IQtoD,0)
+    D += round(Dnew,0); aD.append(Dnew)
+    R += round(ItoR + IQtoR + HtoR,0); aR.append(ItoR + IQtoR + HtoR)
+    Sq += round(StoSQ - SQtoE - SQtoEQ,0); aSQ.append(Sq)
+    E += round(StoE + SQtoE - EtoEQ - EtoI,0); aE.append(E)
+    Eq += round(EtoEQ + SQtoEQ - EQtoI - EQtoIQ,0); aEQ.append(Eq)
+    I += round(EtoI + EQtoI - ItoR - ItoIQ - ItoH - ItoD,0); aI.append(I)
+    Iq += round(ItoIQ + EQtoIQ - IQtoR - IQtoH - IQtoD,0); aIQ.append(Iq)
+    H += round(ItoH + IQtoH + ICUtoH - HtoR - HtoICU - HtoD,0); aH.append(H)
+    Icu += round(HtoICU - ICUtoH - ICUtoD,0); aICU.append(Icu)
+    S += round(-StoSQ - StoE,0); aS.append(S)
 
+    TotPop = S + Sq + E + Eq +I + Iq + H + Icu + R - Dnew
 
-    print(round(S,0), round(Sq,0), round(E,0), round(Eq,0), round(I,0), round(Iq,0),  round(H,0), round(Icu,0),
-           int(ItoR + IQtoR + HtoR), int(HtoD + ICUtoD + ItoD + IQtoD), int(TotPop), S0 - int(D))
+    print(int(S), int(Sq), int(E), int(Eq), int(I), int(Iq),  int(H), int(Icu),
+           int(R), int(HtoD + ICUtoD + ItoD + IQtoD), int(TotPop), S0 - int(Dnew))
 tot_infected = np.asarray(aI) + np.asarray(aIQ)
 #plt.plot(aI)
